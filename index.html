@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" type="text/css" href="css/main.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.11.1/jquery.validate.js"></script>
+  <script type="text/javascript" src="js/main.js"></script>
+</head>
+
+<body>
+  <div class="container">
+    <div class="options-box">
+      <div>
+        <form id="form" method="post" action="#">
+            <label for="long">Longititude(-180 to +180)</label>
+            <input type="text" name="long" id="long" />
+            <label for="lati">Latitude(-90 to +90)</label>
+            <input type="text" name="lati" id="lati" />
+            <label for="message">Your message(*)</label>
+            <textarea name="message" id="message" cols="30" rows="5"></textarea>
+            <button type="submit">Submit</button> <!--type-submit is neccessary for jq-validator to submit form -->
+        </form>
+      </div>
+    </div>
+    <div id="map"></div>
+  </div>
+
+
+  <script>
+    var map, largeInfowindow;
+
+    function initMap() {
+      map = new google.maps.Map(document.getElementById('map'), {
+        center: {lat: 40.7413549, lng: -73.9980244},
+        zoom: 13,
+      });
+      largeInfowindow = new google.maps.InfoWindow();
+    }
+
+
+    function newMarker(input_lati, input_long, message) {
+//          if (marker != undefined) {
+//            marker.setMap(null)
+//          }
+          var marker = new google.maps.Marker({
+          map: map,
+          position: {lat: input_lati, lng: input_long},
+          animation: google.maps.Animation.DROP,
+        });
+        var bounds = new google.maps.LatLngBounds();
+        bounds.extend(marker.position);
+        map.fitBounds(bounds);
+
+        var listener = google.maps.event.addListener(map, "idle", function() {
+          if (map.getZoom() > 0) map.setZoom(7);
+          google.maps.event.removeListener(listener);
+        });
+
+        // Create an onclick event to open an infowindow at each marker.
+        marker.addListener('click', function() {
+          populateInfoWindow(this, largeInfowindow, message);
+        });
+
+      }
+
+    function populateInfoWindow(marker, infowindow, message) {
+          infowindow.marker = marker;
+          infowindow.setContent('<div>' + message + '</div>');
+          infowindow.open(map, marker);
+          // Make sure the marker property is cleared if the infowindow is closed.
+          infowindow.addListener('closeclick',function(){
+            infowindow.setMarker = null;
+          });
+    }
+
+
+  </script>
+  <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCI_jJmkK7aY-UPtU-ZxSjQC4fLO2AZoIw&v=3&callback=initMap">
+</script>
+
+<!--  <script async defer
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCI_jJmkK7aY-UPtU-ZxSjQC4fLO2AZoIw&v=3&callback=initMap">
+    </script> -->
+</body>
+</html>
