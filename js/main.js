@@ -1,4 +1,4 @@
-$(document).ready(function () {
+$(function () {
     $("#form").validate({
         rules: {
             "long": {
@@ -38,5 +38,32 @@ $(document).ready(function () {
     $.validator.addMethod("long_coord", function(value) {
        return /^[-+]?(180(\.0+)?|((1[0-7]\d)|([1-9]?\d))(\.\d+)?)$/.test(value) // within -180 to +180
     });
+
+    var i = 0
+
+    $("#map").goMap({
+      //latitude: 22.369164,
+      //longitude: 114.093054,
+      address: "Hong Kong",
+      zoom: 11,
+      hideByClick: true,
+      oneInfoWindow: false,
+      maptype: 'ROADMAP'
+      });
+
+      function newMarker(input_lati, input_long, message) {
+        $.goMap.createMarker({
+          latitude: input_lati,
+          longitude: input_long,
+          id: 'info' + (i++).toString,
+          html: {
+              content: message,
+              popup: true
+          }
+        });
+        //$.goMap.fitBounds('markers',['info2'])
+        $.goMap.setMap({latitude: input_lati, longitude: input_long, zoom: 7})
+      }
+
 
 });
